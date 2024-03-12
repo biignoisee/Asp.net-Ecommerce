@@ -1,0 +1,105 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="~/Content/images/hammer.png">
+    <title>@ViewBag.Title - Ferreteria El Abuelo</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #dfe8ed; ">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand ps-3 d-flex gap-1 .justify-content-start" href="@Url.Action("Index","Tienda")">
+                <div class="sb-nav-link-icon"><i class="fas fa-hammer"></i></div>
+                <h5 class="align-self-end mt-1">El Abuelo</h5>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+                    @*<li class="nav-item"><a class="nav-link" href="#!">About</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Shop</a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="#!">All Products</a></li>
+                                <li><hr class="dropdown-divider" /></li>
+                                <li><a class="dropdown-item" href="#!">Popular Items</a></li>
+                                <li><a class="dropdown-item" href="#!">New Arrivals</a></li>
+                            </ul>
+                        </li>*@
+                </ul>
+                <form class="d-flex">
+
+                    @if (Session["Cliente"] == null)
+                    {
+                        <a class="btn btn-outline-dark" href="@Url.Action("Index","Acceso")">
+                            <i class="fas fa-sign-out-alt me-1"></i>Iniciar Sesión
+                        </a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-outline-dark" href="@Url.Action("Carrito","Tienda")">
+                            <i class="fas fa-gifts me-1"></i>
+                            Carrito de Compra
+                            <span class="badge bg-dark text-white ms-1 rounded-pill" id="cantidadCarrito">0</span>
+                        </a>
+
+                        <ul class="navbar-nav ms-auto me-0 me-md-3 my-2 my-md-0">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                    <li><a class="dropdown-item" href="#!"><b>@User.Identity.Name</b></a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("MisCompras","Tienda")">Mis Compras</a></li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("CerrarSesion","Acceso")">Cerrar Sesión</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    }
+                </form>
+            </div>
+        </div>
+    </nav>
+    @RenderBody()
+
+<footer class="py-4 mt-auto" style="background-color: #dfe8ed;">
+    <div class="container-fluid px-4">
+        <div class="d-flex align-items-center justify-content-between small">
+            <div class="text-muted">Copyright &copy; Ferreteria El Abuelo 2022</div>
+            <div>
+                <a href="#">Política de Privacidad</a>
+                &middot;
+                <a href="#">Terminos &amp; Condiciones</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+
+
+    <script>
+        $(document).ready(function () {
+            MostrarCantidadCarrito()
+        })
+
+        function MostrarCantidadCarrito() {
+            if ($("#cantidadCarrito").length > 0) {
+                jQuery.ajax({
+                    url: '@Url.Action("CantidadEnCarrito","Tienda")',
+                    type: "GET",
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+                        $("#cantidadCarrito").text(data.cantidad)
+                    }
+                });
+            }
+        } 
+    </script>
+</body>
+</html>

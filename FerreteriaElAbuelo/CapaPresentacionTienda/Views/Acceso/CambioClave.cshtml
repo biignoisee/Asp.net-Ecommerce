@@ -1,0 +1,106 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="~/Content/images/hammer.png">
+    <link href="~/Content/site.css" rel="stylesheet" />
+
+    <title>Cambiar Contraseña - Ferreteria El Abuelo</title>
+</head>
+<body style=" background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAdH70KlGrgGhXeOldHyZLUKlJec3AgjQd9A&usqp=CAU');">
+    <div id="layoutAuthentication">
+        <div id="layoutAuthentication_content">
+            <main>
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-7">
+                            <div class="card shadow-lg border-0 rounded-lg mt-5" style="background-color: #dfe8ed;">
+                                <div class="card-header"><h3 class="text-center font-weight-light my-4">Cambiar Contraseña</h3></div>
+                                <div class="card-body">
+                                    <form action="@Url.Action("CambioClave", "Acceso")" method="post">
+
+                                        <input class="form-control" type="hidden" value="@TempData["IdCliente"]" name="idCliente" />
+
+
+                                        <div class="row mb-3">
+                                            <div class="col-md-12">
+                                                <div class="form-floating mb-3 mb-md-0">
+                                                    <input class="form-control" id="inputPassword" type="password" name="claveActual" value="@ViewData["vClave"]" />
+                                                    <label for="inputPassword">Contraseña Actual</label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <div class="col-md-12">
+                                                <div class="form-floating mb-3 mb-md-0">
+                                                    <input class="form-control" id="inputPassword" type="password" name="nuevaClave" />
+                                                    <label for="inputPassword">Nueva Contraseña</label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <div class="col-md-12">
+                                                <div class="form-floating mb-3 mb-md-0">
+                                                    <input class="form-control" id="inputPassword" type="password" name="confirmarClave" />
+                                                    <label for="inputPassword">Confirma Nueva Contraseña</label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        @{
+                                            if (ViewBag.Error != null)
+                                            {
+
+                                                <div class="row mb-3">
+                                                    <div class="col-md-12">
+                                                        <div class="alert alert-danger" role="alert">
+                                                            @ViewBag.Error
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            }
+                                        }
+
+
+
+                                        <div class="mt-4 mb-0">
+                                            <div class="d-grid"><button class="btn btn-primary btn-danger" type="submit">Cambiar Contraseña</button></div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="card-footer text-center py-3">
+                                    <div class="small"><a href="@Url.Action("Index","Acceso")">Regresar a la pantalla principal</a></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+        <div id="layoutAuthentication_footer">
+            <footer class="py-4 mt-auto" style="background-color: #dfe8ed;">
+                <div class="container-fluid px-4">
+                    <div class="d-flex align-items-center justify-content-between small">
+                        <div class="text-muted">Copyright &copy; Ferreteria El Abuelo 2022</div>
+                        <div>
+                            <a href="#">Política de Privacidad</a>
+                            &middot;
+                            <a href="#">Terminos &amp; Condiciones</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <script src="~/Scripts/bootstrap.bundle.js"></script>
+</body>
+</html>

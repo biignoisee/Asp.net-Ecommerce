@@ -1,0 +1,76 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/x-icon" href="~/Content/images/hammer.png">
+    <title>Reestablecer Contraseña - Ferreteria El Abuelo</title>
+    <link href="~/Content/site.css" rel="stylesheet" />
+</head>
+<body style=" background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAdH70KlGrgGhXeOldHyZLUKlJec3AgjQd9A&usqp=CAU');">
+    <div id="layoutAuthentication">
+        <div id="layoutAuthentication_content">
+            <main>
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-5">
+                            <div class="card shadow-lg border-0 rounded-lg mt-5" style="background-color: #dfe8ed;">
+                                <div class="card-header"><h3 class="text-center font-weight-light my-4">Reestablecer Contraseña</h3></div>
+                                <div class="card-body">
+                                    <div class="small mb-3 text-muted">Ingresa tu correo electronico y te enviaremos tu nueva contraseña</div>
+                                    <form action="@Url.Action("Reestablecer", "Acceso")" method="post">
+                                        <div class="form-floating mb-3">
+                                            <input class="form-control" type="email" name="correo" autocomplete="off" />
+                                            <label for="inputEmail">Correo Electrónico</label>
+                                        </div>
+
+                                        @{
+                                            if (ViewBag.Error != null)
+                                            {
+                                                <div class="form-floating mb-3">
+                                                    <div class="alert alert-danger" role="alert">
+                                                        @ViewBag.Error
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+
+
+                                        <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+                                            <a class="small" href="@Url.Action("Index","Acceso")">Regresar al Logueo</a>
+                                            <button class="btn btn-danger" type="submit">Reestablecer Contrasñea</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="card-footer text-center py-3">
+                                    <div class="small"><a href="@Url.Action("RegistroCliente","Acceso")">¿Necesitas una cuenta? </a></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+        <div id="layoutAuthentication_footer">
+            <footer class="py-4 mt-auto" style="background-color: #dfe8ed;">
+                <div class="container-fluid px-4">
+                    <div class="d-flex align-items-center justify-content-between small">
+                        <div class="text-muted">Copyright &copy; Ferreteria El Abuelo 2022</div>
+                        <div>
+                            <a href="#">Política de Privacidad</a>
+                            &middot;
+                            <a href="#">Terminos &amp; Condiciones</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <script src="~/Scripts/bootstrap.bundle.js"></script>
+</body>
+</html>

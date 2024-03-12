@@ -1,0 +1,108 @@
+﻿@model CapaEntidad.Cliente
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/x-icon" href="~/Content/images/hammer.png">
+    <title>RegistroCliente - Ferreteria El Abuelo</title>
+    <link href="~/Content/site.css" rel="stylesheet" />
+</head>
+<body style=" background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAdH70KlGrgGhXeOldHyZLUKlJec3AgjQd9A&usqp=CAU');">
+    <div id="layoutAuthentication">
+        <div id="layoutAuthentication_content">
+            <main>
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-7">
+                            <div class="card shadow-lg border-0 rounded-lg mt-5" style="background-color: #dfe8ed;">
+                                <div class="card-header"><h3 class="text-center font-weight-light my-4">Crear una Cuenta</h3></div>
+                                <div class="card-body">
+                                    <form action="@Url.Action("RegistroCliente", "Acceso")" method="post">
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <div class="form-floating mb-3 mb-md-0">
+                                                    @Html.TextBoxFor(m => m.Nombres, new { @class = "form-control", @id = "txtNombre", value = ViewData["Nombres"] })
+                                                    @Html.Label("txtNombre", "Nombres")
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-floating mb-3 mb-md-0">
+                                                    @Html.TextBoxFor(m => m.Apellidos, new { @class = "form-control", @id = "txtApellido", value = ViewData["Apellidos"] })
+                                                    @Html.Label("txtApellido", "Apellidos")
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <div class="col-md-12">
+                                                <div class="form-floating">
+                                                    @Html.TextBoxFor(m => m.Correo, new { @class = "form-control", @id = "txtCorreo", value = ViewData["Correo"] })
+                                                    @Html.Label("txtCorreo", "Correo")
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <div class="form-floating mb-3 mb-md-0">
+                                                    @Html.PasswordFor(m => m.Clave, new { @class = "form-control", @id = "txtClave", value = ViewData["Clave"] })
+                                                    @Html.Label("txtClave", "Clave")
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-floating mb-3 mb-md-0">
+                                                    @Html.PasswordFor(m => m.ConfirmarClave, new { @class = "form-control", @id = "txtConfirmarClave", value = ViewData["ConfirmarClave"] })
+                                                    @Html.Label("txtConfirmarClave", "Confirmar Contraseña")
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        @{
+                                            if (ViewBag.Error != null)
+                                            {
+                                                <div class="row mb-3">
+                                                    <div class="alert alert-danger" role="alert">
+                                                        Ingrese los datos correctamente
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+
+
+                                        <div class="mt-4 mb-0">
+                                            <div class="d-grid"><button class="btn btn-primary btn-danger" href="login.html" type="submit">Crear Cuenta</button></div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="card-footer text-center py-3">
+                                    <div class="small"><a href="@Url.Action("Index","Acceso")">¿Ya tienes una Cuenta? Inicia Sesión</a></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+        <div id="layoutAuthentication_footer">
+            <footer class="py-4 mt-auto" style="background-color: #dfe8ed;">
+                <div class="container-fluid px-4">
+                    <div class="d-flex align-items-center justify-content-between small">
+                        <div class="text-muted">Copyright &copy; Ferreteria El Abuelo 2022</div>
+                        <div>
+                            <a href="#">Política de Privacidad</a>
+                            &middot;
+                            <a href="#">Terminos &amp; Condiciones</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <script src="~/Scripts/bootstrap.bundle.js"></script>
+</body>
+</html>

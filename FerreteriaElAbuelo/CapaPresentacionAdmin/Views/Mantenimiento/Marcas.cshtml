@@ -1,0 +1,301 @@
+﻿
+@{
+    ViewBag.Title = "Marcas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<ol class="breadcrumb mb-4 mt-4">
+    <li class="breadcrumb-item"><a href="#">Mantenimiento</a></li>
+    <li class="breadcrumb-item active">Marcas</li>
+</ol>
+
+
+<div class="card">
+    <div class="card-header">
+        <i class="fas fa-bookmark"></i> Bienvenido a la Lista de Marcas
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12">
+                <!-- Con el metodo onclik para abrir el modal cada vez que hagan click -->
+                <button class="btn btn-success" onclick="abrirModal(null)">Nueva Marca</button>
+            </div>
+        </div>
+
+        <hr />
+
+        <table id="tabla" class="display cell-border" style=" width: 100%">
+            <thead>
+                <tr>
+                    <th>Descripción</th>
+                    <th>Activo</th>
+                    <th></th>
+                </tr>
+            </thead>
+
+            <tbody></tbody>
+
+        </table>
+    </div>
+</div>
+
+<!--Modal para el manejo de     data-bs-backdrop="static"  (para que no se cierre si click pantalla)-->
+<div class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" id="FormularioModal" data-bs-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header bg-dark text-white">
+                <h6 class="modal-title"> Marcas - Ferreteria El Abuelo</h6>
+
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <input id="txtId" type="hidden" value="0" />
+
+                <div class="row g-1">
+
+
+                    <div class="col-sm-6">
+                        <label for="txtCorreo" class="form-label">Marcas</label>
+                        <input type="text" class="form-control" id="txtDescripcion" placeholder="Marcas" autocomplete="off">
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="cboActivo" class="form-label">Activo</label>
+                        <select id="cboActivo" class="form-select">
+                            <option value="1">Si</option>
+                            <option value="0">No</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <!--Mensaje de alerta-->
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div id="mensajeError" class="alert alert-danger" role="alert">
+                            Una simple alerta
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" onclick="Guardar()">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@*Trabajar con ajax para que devuelva datos dinamicos*@
+
+@section scripts{
+    <script>
+        var tabladata;
+        var filaSeleccionada;
+
+
+        jQuery.ajax({
+            url: '@Url.Action("ListarMarcas", "Mantenimiento")',
+            type: "GET",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                console.log(data)
+            }
+        })
+
+
+
+        tabladata = $("#tabla").DataTable({
+            responsive: true,
+            ordering: false,
+            "ajax": {
+                url: '@Url.Action("ListarMarcas", "Mantenimiento")',
+                type: "GET",
+                dataType: "json",
+            },
+            "columns": [
+                { "data": "Descripcion" },
+                {
+                    "data": "Activo", "render": function (valor) {
+                        if (valor) {
+                            return '<span class="badge bg-success">Si</span>'
+                        } else {
+                            return '<span class="badge bg-danger">No</span>'
+                        }
+                    }
+                },
+                {
+                    "defaultContent": '<button class="btn btn-primary btn-sm btn-editar"><i class="fas fa-pen"></i></button>' +
+                        '<button class="btn btn-danger btn-sm ms-2 btn-eliminar"><i class="fas fa-trash"></i></button>',
+                    "orderable": false,
+                    "searcheable": false,
+                    "width": "90px"
+                }
+            ],
+            "language": {
+                "url": "https://cdn.datatables.net/plug-ins/1.12.1/i18n/es-ES.json"
+            }
+        });
+
+        //el formato de la data es un json
+
+        function abrirModal(json) {
+
+            $("#txtId").val(0)
+            $("#txtDescripcion").val("")
+            $("#cboActivo").val(1)
+
+            $("#mensajeError").hide()
+
+            if (json != null) {
+                $("#txtId").val(json.IdMarca)
+                $("#txtDescripcion").val(json.Descripcion)
+                $("#cboActivo").val(json.Activo == true ? 1 : 0)
+
+            }
+
+            $("#FormularioModal").modal("show");
+        }
+
+
+        // Cada vez que se haga click en el icono de editar marca
+        $("#tabla tbody").on("click", '.btn-editar', function () {
+
+            //con this estamos llamando a  porque estamos dentro de la tabla su evento
+            filaSeleccionada = $(this).closest("tr");
+
+            //que seleccione cada uno de los objetos llamado por boton
+            const data = tabladata.row(filaSeleccionada).data()
+
+            //necesitamos pasarle los datos del registro al modal
+            abrirModal(data)
+
+        })
+
+
+        // Cada vez que se haga click en el boton eliminar marca
+        $("#tabla tbody").on("click", '.btn-eliminar', function () {
+
+            //con this estamos llamando a  porque estamos dentro de la tabla su evento
+            var marcaSeleccionada = $(this).closest("tr");
+
+            //que seleccione cada uno de los objetos llamado por boton
+            const data = tabladata.row(marcaSeleccionada).data()
+
+
+            swal({
+                title: "Estas seguro?",
+                text: "¿Deseas eliminar la marca?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn-primary",
+                confirmButtonText: "Eliminar Marca",
+                cancelButttonText: "Cancelar",
+                closeOnConfirm: true,
+            },
+            function () {
+                    jQuery.ajax({
+                        url: '@Url.Action("EliminarMarca", "Mantenimiento")',
+                        type: "POST",
+                        data: JSON.stringify({ id: data.IdMarca }),
+                        dataType: "json",
+                        contentType: "application/json; charset=utf-8",
+                        success: function (data) {
+                            if (data.resultado) {
+                                tabladata.row(marcaSeleccionada).remove().draw();
+                            } else {
+                                swal("No se puede eliminar", data.mensaje, "error")
+                            }
+
+                        },
+                        error: function (error) {
+                            console.log(error)
+                        },
+                        beforeSend: function () {
+
+                        },
+                    });
+            })
+        })
+
+
+        //creando la función guardar
+        function Guardar() {
+            var Marca = {
+                IdMarca: $("#txtId").val(),
+                Activo: $("#cboActivo").val() == 1 ? true : false,
+                Descripcion: $("#txtDescripcion").val(),
+            }
+
+            //estructura ajax
+
+            jQuery.ajax({
+                url: '@Url.Action("GuardaMarca", "Mantenimiento")',
+                type: "POST",
+                data: JSON.stringify({ objeto: Marca }),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+
+                    $(".modal-body").LoadingOverlay("hide");
+
+                    //Marca NUEVO
+                    if (Marca.IdMarca == 0) {
+
+                        if (data.resultado != 0) {
+                            Marca.IdMarca = data.resultado;
+                            tabladata.row.add(Marca).draw(false)
+
+                            $("#FormularioModal").modal("hide");
+                            console.log("Marca Creada")
+                        } else {
+                            $("#mensajeError").text(data.mensaje)
+                            $("#mensajeError").show()
+                        }
+                    //Marca EDITADO
+                    } else {
+
+                        if (data.resultado) {
+                            tabladata.row(filaSeleccionada).data(Marca).draw(false)
+                            filaSeleccionada = null;
+
+                            $("#FormularioModal").modal("hide");
+
+                            console.log("Marca Editada")
+                        } else {
+                            $("#mensajeError").text(data.mensaje)
+                            $("#mensajeError").show()
+                        }
+                    }
+                },
+                error: function (error) {
+                    $(".modal-body").LoadingOverlay("hide");
+
+                    $("#mensajeError").text("Error en el ajax")
+                    $("#mensajeError").show()
+                },
+                beforeSend: function () {
+                    $(".modal-body").LoadingOverlay("show", {
+                        imageResizeFactor: 2,
+                        text: "Un momento ...",
+                        size: 15
+                    })
+                }
+            });
+        }
+
+    </script>
+}

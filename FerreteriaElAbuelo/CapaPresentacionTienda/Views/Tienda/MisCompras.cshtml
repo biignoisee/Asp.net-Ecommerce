@@ -1,0 +1,75 @@
+﻿@model List<CapaEntidad.DetalleVenta>
+@{
+    ViewBag.Title = "MisCompras";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-sm-12">
+            @{ 
+                if(Model.Count > 0)
+                {
+                    foreach(var item in Model)
+                    {
+                        <div class="row mb-3">
+
+                                        <div class="col-sm-12">
+                                            <div class="card">
+                                                <div class="card-body bg-light">
+                                                    <h6>ID TRANSACCIÓN: @item.IdTransaccion</h6>
+                                                    <div class="table-responsive">
+                                                        <table class="table table-bordered">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Imagen</th>
+                                                                    <th>Producto</th>
+                                                                    <th>Precio Unitario</th>
+                                                                    <th>Cantidad</th>
+                                                                    <th>Sub Total</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody class="bg-white">
+                                                                <tr>
+                                                                    <td>
+                                                                        <img class="card-img-top mb-5 mb-md-0" src="data:image/@item.oProducto.Extension;base64,@item.oProducto.Base64"
+                                                                             style="width: 120px; height: 120px;" />
+                                                                    </td>
+                                                                    <td valign="middle">
+                                                                        @item.oProducto.Nombre
+                                                                    </td>
+                                                                    <td valign="middle">
+                                                                        $@item.oProducto.Precio PEN
+                                                                    </td>
+                                                                    <td valign="middle">
+                                                                        @item.Cantidad
+                                                                    </td>
+                                                                    <td valign="middle">
+                                                                        $@item.Total PEN
+                                                                    </td>
+                                                                </tr>
+                                                             </tbody>
+
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                        </div>
+
+
+                    }
+                } else
+                    {
+                        <div class="row mb-3">
+                            <div class="col-sm-12 text-center">
+                                <h1>No se encontro compras</h1>
+                            </div>
+                        </div>
+                    }
+            }
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,69 @@
+﻿@model CapaEntidad.Producto
+@{
+    ViewBag.Title = "DetalleProducto";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<section class="py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="row gx-4 gx-lg-5 align-items-center">
+            <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0" src="data:image/@Html.DisplayTextFor(m => m.Extension);base64,@Html.DisplayTextFor(m=> m.Base64)" alt="..." /></div>
+            <div class="col-md-6">
+                <div class="small mb-1">Marca: @Html.DisplayTextFor(m => m.oMarca.Descripcion)</div>
+                <h1 class="display-5 fw-bolder">@Html.DisplayTextFor(m => m.Nombre)</h1>
+                <div class="fs-5 mb-5">
+                    @*<span class="text-decoration-line-through">$45.00</span>*@
+                    <span>@Html.DisplayTextFor(m => m.Precio) USD</span>
+                </div>
+                <p class="lead">@Html.DisplayTextFor(m => m.Descripcion)</p>
+                <div class="d-flex">
+
+                    <a href="@Url.Action("Index","Tienda")" class="btn btn-danger w-50 text-center me-3">
+                        <i class="fas fa-undo-alt"></i> Volver
+
+                    </a>
+
+                    @if (Session["Cliente"] != null)
+                    {
+
+                        <button class="btn btn-success agregarCarrito flex-shink-0 w-50" type="button" data-idproducto="@Html.DisplayTextFor(m => m.IdProducto)">
+                            <i class="fas fa-cart-plus"></i> Agregar al carrito
+                        </button>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@section scripts{
+    <script>
+        $(document).on("click", "button.agregarCarrito", function () {
+            console.log($(this).data("idproducto"))
+
+            jQuery.ajax({
+                url: '@Url.Action("AgregarCarrito", "Tienda")',
+                type: "POST",
+                data: JSON.stringify({ idProducto: $(this).data("idproducto") }),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data.respuesta) {
+                        MostrarCantidadCarrito();
+                        swal("", "Agregado al Carrito", "success");
+
+
+                    } else {
+                        swal("", data.mensaje, "warning");
+                    }
+                }
+            });
+
+        })
+    </script>
+}
+

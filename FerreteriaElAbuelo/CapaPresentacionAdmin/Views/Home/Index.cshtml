@@ -1,0 +1,224 @@
+﻿@{
+    ViewBag.Title = "Dashboard";
+}
+<h1 class="mt-4">Dashboard</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item active">Dashboard Ferreteria El Abuelo</li>
+</ol>
+
+
+
+<div class="row">
+    <div class="col-xl-3 col-md-6">
+        <div class="card bg-success text-white mb-4">
+            <div class="card-body">
+                <div class="row d-flex">
+                    <div class="col-sm-9" style="
+                        display: flex;
+                        flex-direction: column;">
+                        <h6 style="margin:0;">Cantidad Clientes</h6>
+                        <h6 id="totalCliente">0</h6>
+                    </div>
+                    <div class="col-sm-3">
+                        <i class="fas fa-user fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="card bg-warning text-white mb-4">
+            <div class="card-body">
+                <div class="row d-flex">
+                    <div class="col-sm-9" style="
+                        display: flex;
+                        flex-direction: column;">
+                        <h6 style="margin:0;">Cantidad Ventas</h6>
+                        <h6 id="totalVenta">0</h6>
+                    </div>
+                    <div class="col-sm-3">
+                        <i class="fas fa-gifts fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="card bg-danger text-white mb-4">
+            <div class="card-body">
+                <div class="row d-flex">
+                    <div class="col-sm-9" style="
+                        display: flex;
+                        flex-direction: column;">
+                        <h6 style="margin:0;">Cantidad Productos</h6>
+                        <h6 id="totalProducto">0</h6>
+                    </div>
+                    <div class="col-sm-3">
+                        <i class="fas fa-hammer fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="card bg-secondary text-white mb-4">
+            <div class="card-body">
+                <div class="row d-flex">
+                    <div class="col-sm-9" style="
+                        display: flex;
+                        flex-direction: column;">
+                        <h6 style="margin:0;">Github Repositorio</h6>
+                        <h6><a href="https://github.com/biignoisee/Proyecto-ExpFormativas" target="_blank" style="text-decoration:none; color:wheat ">Click Aquí</a> </h6>
+                    </div>
+                    <div class="col-sm-3">
+                        <i class="fas fa-code fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="fas fa-table me-1"></i>
+        Historal de Ventas Ferreteria El Abuelo
+    </div>
+
+    <div class="card-body">
+        <form action="@Url.Action("ExportarVenta","Home")" method="post">
+            @*Buscaremos por fecha para que nos devuelva la lista de registros*@
+            <div class="row align-items-end">
+                <div class="col-sm-2">
+                    <div class="mb-2">
+                        <label class="form-label">Fecha de Inicio:</label>
+                        <input class="form-control" type="text" id="txtFechaInicio" name="txtFechaInicio" />
+                    </div>
+                </div>
+
+                <div class="col-sm-2">
+                    <div class="mb-2">
+                        <label class="form-label">Fecha de Fin:</label>
+                        <input class="form-control" type="text" id="txtFechaFin" name="txtFechaFin" />
+                    </div>
+                </div>
+
+                <div class="col-sm-2">
+                    <div class="mb-2">
+                        <label class="form-label">Id Transacción:</label>
+                        <input class="form-control" type="text" id="txtIdTransaccion" name="txtIdTransaccion" />
+                    </div>
+                </div>
+
+                <div class="col-sm-2">
+                    <div class="d-grid mb-2">
+                        <button class="btn btn-primary" id="btnBuscar" type="button"> <i class="fas fa-search"></i>Buscar</button>
+                    </div>
+                </div>
+
+                <div class="col-sm-2">
+                    <div class="d-grid mb-2">
+                        <button class="btn btn-success" type="submit"> <i class="fas fa-file-excel"></i>Exportar</button>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+
+        <hr />
+
+        <div class="row">
+            <div class="col-sm-12">
+                <table id="tabla" class="display cell-border" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Fecha Venta</th>
+                            <th>Cliente</th>
+                            <th>Producto</th>
+                            <th>Precio</th>
+                            <th>Cantidad</th>
+                            <th>Total</th>
+                            <th>Id Transaccion</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section scripts {
+    <script>
+
+        var tabladata;
+
+        $(document).ready(function () {
+            $("#txtFechaInicio").datepicker({dateFormat: 'dd/mm/yy'}).datepicker('setDate', new Date())
+            $("#txtFechaFin").datepicker({ dateFormat: 'dd/mm/yy' }).datepicker('setDate', new Date())
+
+            jQuery.ajax({
+                url: '@Url.Action("VistaDashboard", "Home")',
+                type: "GET",
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+
+                    var objeto = data.resultado;
+
+                    $("#totalCliente").text(objeto.TotalCliente)
+                    $("#totalVenta").text(objeto.TotalVente)
+                    $("#totalProducto").text(objeto.TotalProducto)
+                }
+            });
+
+
+
+            var Url = '@Url.Action("ListaReporte","Home")' +
+                "?fechaInicio=" + $("#txtFechaInicio").val()+
+                "&fechaFin=" + $("#txtFechaFin").val()+
+                "&idTransaccion=" + $("#txtIdTransaccion").val()
+
+
+            tabladata = $("#tabla").DataTable({
+                responsive: true,
+                ordering: false,
+                "ajax": {
+                    url: '@Url.Action("ListaReporte", "Home")',
+                    type: "GET",
+                    dataType: "json",
+                },
+                "columns": [
+                    { "data": "FechaVenta" },
+                    { "data": "Cliente" },
+                    { "data": "Producto" },
+                    { "data": "Precio" },
+                    { "data": "Cantidad" },
+                    { "data": "Total" },
+                    { "data": "IdTransaccion" }
+                ],
+                "language": {
+                    "url": "https://cdn.datatables.net/plug-ins/1.12.1/i18n/es-ES.json"
+                }
+            });
+        })
+
+
+        $("#btnBuscar").on("click", function (){
+            var nueva_url = '@Url.Action("ListaReporte","Home")' +
+                "?fechaInicio=" + $("#txtFechaInicio").val()+
+                "&fechaFin=" + $("#txtFechaFin").val()+
+                "&idTransaccion=" + $("#txtIdTransaccion").val()
+
+            tabladata.ajax.url(nueva_url).load()
+
+        })
+    </script>
+} 
+

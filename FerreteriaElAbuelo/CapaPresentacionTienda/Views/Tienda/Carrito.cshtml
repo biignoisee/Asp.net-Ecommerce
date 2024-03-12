@@ -1,0 +1,463 @@
+﻿@model CapaEntidad.Producto
+@{
+    ViewBag.Title = "Carrito";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+
+                    <div class="row">
+                        @*Trabajar con el detalle del producto*@
+                        <div class="col-sm-9">
+                            <div class="me-2">
+                                <div class="d-flex justify-content-between">
+                                    <h5 class="ms-2 mt-2">Detalle Carrito</h5>
+                                    <a class="btn btn-primary" href="@Url.Action("Index","Tienda")">
+                                        <i class="fas fa-cart-plus"></i>Seguir Comprando
+                                    </a>
+                                </div>
+
+                                <hr class="mt-2 mb-2" />
+
+                                <div id="productos-carrito">
+                                </div>
+
+                                <div class="d-flex justify-content-end">
+
+                                    <label class="align self-center"> <b>Total S/. <span id="total">600</span> </b> </label>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        @*Trabajar con el detalle del envio*@
+                        <div class="col-sm-3">
+                            <div class="card" style="background-color: #dfe8ed; ">
+                                <div class="card-body bg-light">
+                                    <h5 class="card-title">Detalle del Envio</h5>
+                                    <form>
+                                        <div class="mb-2">
+                                            <label for="cboDepartamento" class="form-label">Departamento: </label>
+                                            <select class="form-select form-select-sm" id="cboDepartamento"></select>
+                                        </div>
+
+                                        <div class="mb-2">
+                                            <label for="cboProvincia" class="form-label">Provincia: </label>
+                                            <select class="form-select form-select-sm" id="cboProvincia"></select>
+                                        </div>
+
+                                        <div class="mb-2">
+                                            <label for="cboDistrito" class="form-label">Distrito: </label>
+                                            <select class="form-select form-select-sm" id="cboDistrito"></select>
+                                        </div>
+
+                                        <div class="mb-2">
+                                            <label for="txtNombreContacto" class="form-label">Nombre Contacto: </label>
+                                            <input type="text" class="form-control form-control-sm" id="txtNombreContacto" autocomplete="off">
+                                        </div>
+
+                                        <div class="mb-2">
+                                            <label for="txtDireccion" class="form-label">Dirección: </label>
+                                            <input type="text" class="form-control form-control-sm" id="txtDireccion" autocomplete="off">
+                                        </div>
+
+
+                                        <div class="mb-3">
+                                            <label for="txtTelefono" class="form-label">Telefono: </label>
+                                            <input type="text" class="form-control form-control-sm" id="txtTelefono" autocomplete="off">
+                                        </div>
+
+                                        <div class="d-grid">
+                                            <button class="btn btn-success" type="button" onclick="RealizarPago()">
+                                                <i class="fab fa-paypal"></i> Procesar Pago
+
+                                            </button>
+                                        </div>
+
+                                    </form>
+
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            jQuery.ajax({
+                url: '@Url.Action("ListarProductosCarrito", "Tienda")',
+                type: "POST",
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (response) {
+                    $("#productos-carrito").html("");
+
+                    $("#productos-carrito").LoadingOverlay("hide");
+
+                    $.each(response.data, function (i, item) {
+
+                        $("<div>").addClass("card mb-2 card-producto").append(
+                            $("<div>").addClass("card-body").append(
+                                $("<div>").addClass("row").append(
+                                    //=>5 columnas
+                                    //1
+                                    $("<div>").addClass("col-sm-2 align-self-center d-flex justify-content-center").append(
+                                        $("<img>").addClass("rounded").attr({ "src": "data:image/" + item.oProducto.Extension + ";base64," + item.oProducto.Base64 })
+                                            .css({"width":"100px","height":"100px"})
+                                    ),
+
+                                    //2
+
+                                    $("<div>").addClass("col-sm-4 align-self-center").append(
+                                        $("<span>").addClass("font-wigth-bold d-block").text(item.oProducto.oMarca.Descripcion),
+                                        $("<span>").text(item.oProducto.Nombre)
+                                    ),
+
+                                    //3
+                                    $("<div>").addClass("col-sm-2 align-self-center").append(
+                                        $("<span>").text("S/"+item.oProducto.Precio.toFixed(2) + " PEN")
+                                    ),
+
+
+                                    //4
+                                    $("<div>").addClass("col-sm-2 align-self-center").append(
+                                        $("<div>").addClass("d-flex").append(
+                                            $("<button>").addClass("btn btn-outline-secondary btn-restar rounded-0").append(
+                                                $("<i>").addClass("fas fa-minus")
+                                            ),
+                                            $("<input>").addClass("form-control input-cantidad p-1 text-center rounded-0").attr({"disabled":"disabled"})
+                                            .css({ "width": "40px" })
+                                                .data("oProducto", item.oProducto).val(item.Cantidad),
+                                            $("<button>").addClass("btn btn-outline-secondary btn-sumar rounded-0").append(
+                                                $("<i>").addClass("fas fa-plus")
+                                            ),
+                                        )
+                                    ),
+                                    //5
+
+                                    $("<div>").addClass("col-sm-2 align-self-center").append(
+
+                                        $("<div>").addClass("d-flex").append(
+                                            $("<button>").addClass("btn btn-outline-danger btn-eliminar").append(
+                                                $("<i>").addClass("far fa-trash-alt"), " Eliminar"
+                                            ).data("idProducto", item.oProducto.IdProducto)
+                                        )
+                                    )
+                                )
+                            )
+                        ).appendTo("#productos-carrito")
+                    })
+
+                    sumarTotal()
+
+                },
+                error: function (error) {
+                    $("#productos-carrito").LoadingOverlay("hide");
+                },
+                beforeSend: function () {
+                    $("#productos-carrito").LoadingOverlay("show");
+                }
+            })
+
+
+
+            ListarDepartamento()
+        })
+
+
+
+
+
+
+
+        function ListarDepartamento() {
+
+            //añadimos un primer option para que nos brinde la opcion de seleccione... pero no tendra ningun valor
+            $("<option>").attr({ "value": "00","disabled": "disabled", "selected":"true" }).text("Seleccionar").appendTo("#cboDepartamento")
+
+            jQuery.ajax({
+                url: '@Url.Action("ObtenerDepartamento","Tienda")',
+                type: 'POST',
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data.lista != null) {
+                        $.each(data.lista, function (i, item) {
+                            $("<option>").attr({ "value": item.IdDepartamento }).text(item.Descripcion).appendTo("#cboDepartamento")
+                        })
+
+                        ListarProvincia()
+                    }
+
+                }
+            })
+        }
+
+
+        $("#cboDepartamento").on("change", function () {
+            ListarProvincia();
+        })
+
+        function ListarProvincia() {
+
+            //limpiar cada vez que seleccione
+
+            $("#cboProvincia").html("")
+
+            //añadimos un primer option para que nos brinde la opcion de seleccione... pero no tendra ningun valor
+            $("<option>").attr({ "value": "00","disabled": "disabled", "selected":"true" }).text("Seleccionar").appendTo("#cboProvincia")
+
+            jQuery.ajax({
+                url: '@Url.Action("ObtenerProvincia", "Tienda")',
+                type: 'POST',
+                data: JSON.stringify({ IdDepartamento : $("#cboDepartamento option:selected").val() }),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data.lista != null) {
+                        $.each(data.lista, function (i, item) {
+                            $("<option>").attr({ "value": item.IdProvincia }).text(item.Descripcion).appendTo("#cboProvincia")
+                        })
+
+                        ListarDistrito();
+                    }
+
+                }
+            })
+        }
+
+        $("#cboProvincia").on("change", function () {
+            ListarDistrito();
+        })
+
+
+        function ListarDistrito() {
+
+            //limpiar cada vez que seleccione
+
+            $("#cboDistrito").html("")
+
+            //añadimos un primer option para que nos brinde la opcion de seleccione... pero no tendra ningun valor
+            $("<option>").attr({ "value": "00", "disabled": "disabled", "selected": "true" }).text("Seleccionar").appendTo("#cboDistrito")
+
+            jQuery.ajax({
+                url: '@Url.Action("ObtenerDistritos", "Tienda")',
+                type: 'POST',
+                data: JSON.stringify({ IdDepartamento: $("#cboDepartamento option:selected").val(), IdProvincia: $("#cboProvincia option:selected").val() }),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data.lista != null) {
+                        $.each(data.lista, function (i, item) {
+                            $("<option>").attr({ "value": item.IdDistrito }).text(item.Descripcion).appendTo("#cboDistrito")
+                        })
+                    }
+
+                }
+            })
+        }
+
+
+        function sumarTotal() {
+            var sumaTotal = parseFloat(0)
+
+            $("input.input-cantidad").each(function (i) {
+                var precio = $(this).data("oProducto").Precio;
+                var cantidad = parseFloat($(this).val());
+
+                var subtotal = precio * cantidad;
+
+                sumaTotal += subtotal
+
+            })
+
+
+            $("#total").text(sumaTotal.toFixed(2))
+            $("#total").data("sumatotal",sumaTotal)
+
+        }
+
+
+
+        $(document).on("click", ".btn-sumar", function () {
+
+            var divContenedor = $(this).parent("div.d-flex");
+
+            var inputCantidad = $(divContenedor).find("input.input-cantidad")
+
+            var btn = $(this)
+
+            var idProducto = $(inputCantidad).data("oProducto").IdProducto;
+
+            jQuery.ajax({
+                url: '@Url.Action("OperacionCarrito", "Tienda")',
+                type: 'POST',
+                data: JSON.stringify({ idProducto: idProducto, sumar : true}),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $(btn).LoadingOverlay("hide")
+                    if (data.respuesta) {
+                        var cantidad = parseInt($(inputCantidad).val()) + 1;
+                        $(inputCantidad).val(cantidad)
+                        sumarTotal()
+                    } else {
+                        swal("",data.mensaje,"warning")
+                    }
+                },
+                beforeSend: function () {
+                    $(btn).LoadingOverlay("show")
+                },
+                error: function (error) {
+                    $(btn).LoadingOverlay("hide")
+                }
+            })
+
+        })
+
+
+        $(document).on("click", ".btn-restar", function () {
+
+            var divContenedor = $(this).parent("div.d-flex");
+
+            var inputCantidad = $(divContenedor).find("input.input-cantidad")
+
+            var btn = $(this)
+
+
+            var cantidad = parseInt($(inputCantidad).val()) - 1;
+            var idProducto = $(inputCantidad).data("oProducto").IdProducto;
+
+            if (cantidad >= 1) {
+                jQuery.ajax({
+                    url: '@Url.Action("OperacionCarrito", "Tienda")',
+                    type: 'POST',
+                    data: JSON.stringify({ idProducto: idProducto, sumar : false}),
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+                        $(btn).LoadingOverlay("hide")
+                        if (data.respuesta) {
+
+                            $(inputCantidad).val(cantidad)
+                            sumarTotal()
+                        } else {
+                            swal("",data.mensaje,"warning")
+                        }
+                    },
+                    beforeSend: function () {
+                        $(btn).LoadingOverlay("show")
+                    },
+                    error: function (error) {
+                        $(btn).LoadingOverlay("hide")
+                    }
+                })
+            }
+
+
+
+        })
+
+
+
+        $(document).on("click", ".btn-eliminar", function () {
+            var idProducto = $(this).data("idProducto");
+
+            var cardProducto = $(this).parents("div.card-producto"); //todo card-producto sera eliminado
+
+            jQuery.ajax({
+                url: '@Url.Action("EliminarCarrito", "Tienda")',
+                type: 'POST',
+                data: JSON.stringify({ idProducto: idProducto}),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+
+                    if (data.respuesta) {
+
+                        cardProducto.remove()
+
+                        MostrarCantidadCarrito();
+
+                        sumarTotal();
+                    } else {
+                        swal("",data.mensaje,"warning")
+                    }
+                }
+            })
+        })
+
+
+        function RealizarPago() {
+            if (parseInt($("#cantidadCarrito").text()) == 0) {
+                swal("", "No existe productos en el carrito", "warning");
+                return //evita a que se ejecute otra operacion
+            }
+
+            if ($("#cboDistrito").val() == null || $("#txtNombreContacto").val() == "" || $("#txtDireccion").val() == "" || $("#txtTelefono").val() == "") {
+                swal("", "Complete los datos del envio", "warning")
+                return //evita a que se ejecute otra operacion
+            }
+
+            var venta = {
+                TotalProducto: $("input.input-cantidad").length,
+                MontoTotal: 0,
+                Contacto: $("#txtNombreContacto").val(),
+                IdDistrito: $("#cboDistrito").val(),
+                Telefono: $("#txtTelefono").val(),
+                Direccion: $("#txtDireccion").val()
+            }
+
+            var lista_carrito = [];
+
+            $("input.input-cantidad").each(function (i) {
+                var producto = $(this).data("oProducto");
+                var cantidad = parseFloat($(this).val());
+
+                lista_carrito.push({
+                    oProducto: producto,
+                    Cantidad : cantidad
+                })
+            })
+
+            jQuery.ajax({
+                url: '@Url.Action("ProcesarPago", "Tienda")',
+                type: 'POST',
+                data: JSON.stringify({ oListaCarrito: lista_carrito, oVenta: venta }),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $.LoadingOverlay("hide")
+                    if (data.Status) {
+                        window.location.href = data.Link;
+                    } else {
+                        swal("", "Vuelve a intentarlo más tarde", "warning");
+                    }
+                },
+                beforeSend: function () {
+                    $.LoadingOverlay("show")
+                },
+                error: function (error) {
+                    $.LoadingOverlay("hide")
+                }
+            })
+
+
+        }
+
+    </script>    
+    
+}

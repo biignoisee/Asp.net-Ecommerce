@@ -1,0 +1,12 @@
+Estamos usando correo temporales para la prueba
+Para tener acceso en el logueo capaPresentacionAdmin, ingrese los datos:
+
+correo : jahirok761@dmtubes.com	
+contraseña: grupo09
+
+
+Automaticamente al generar un nuevo usuario, le brinda una contraseña autogenerada
+
+--Para acceder a la capaPresentacionTienda
+
+necesitaras crear una cuenta, te llegara un correo
